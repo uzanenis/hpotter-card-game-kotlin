@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "33514037040",
+    "project_id": "fir-login-6593b",
+    "storage_bucket": "fir-login-6593b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:33514037040:android:443bbf0261362e753972f5",
+        "android_client_info": {
+          "package_name": "com.enisuzan.firebaselogin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "33514037040-v9sa8m9d96iftvo09rm6s9jjb8r84o64.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3mBRH6375hlvAOESk4UKW5KCau_nkS2s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "33514037040-v9sa8m9d96iftvo09rm6s9jjb8r84o64.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
