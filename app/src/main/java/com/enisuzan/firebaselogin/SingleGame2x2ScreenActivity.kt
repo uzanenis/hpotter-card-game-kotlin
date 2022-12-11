@@ -107,8 +107,10 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
                 fun checkMatch(card1: Int, card2: Int) {
                     fun String.trimAndDouble() = trim().toDouble()
                     if (screenItems[card1].name == screenItems[card2].name) {
-                        val houseScore: Double = if (screenItems[card1].house.toString() == "Gryffindor"
-                            || screenItems[card1].house.toString() == "Slytherin") 2.0 else 1.0;
+                        val houseScore: Double =
+                            if (screenItems[card1].house.toString() == "Gryffindor"
+                                || screenItems[card1].house.toString() == "Slytherin"
+                            ) 2.0 else 1.0;
                         Toast.makeText(
                             this@SingleGame2x2ScreenActivity,
                             "Cards matched! Good job!",
@@ -116,26 +118,35 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
                         ).show()
                         screenItems[card1].isMatched = true
                         screenItems[card2].isMatched = true
-                        playerScore = playerScore?.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore) * (currentTime?.toDouble()!! / 10))
+                        playerScore =
+                            playerScore?.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore) * (currentTime?.toDouble()!! / 10))
                         binding.playerOnePoints.text = playerScore.toString()
                     } else {
-                        if(screenItems[card1].house == screenItems[card2].house){
-                            val houseScore: Double = if (screenItems[card1].house.toString() == "Gryffindor"
-                                || screenItems[card1].house.toString() == "Slytherin") 2.0 else 1.0;
-                            playerScore = playerScore?.minus(((screenItems[card1].score?.trimAndDouble()!! +
-                                    screenItems[card2].score?.trimAndDouble()!!) / houseScore) *
-                                    (45.0 - currentTime?.toDouble()!! / 10)
+                        if (screenItems[card1].house == screenItems[card2].house) {
+                            val houseScore: Double =
+                                if (screenItems[card1].house.toString() == "Gryffindor"
+                                    || screenItems[card1].house.toString() == "Slytherin"
+                                ) 2.0 else 1.0;
+                            playerScore = playerScore?.minus(
+                                ((screenItems[card1].score?.trimAndDouble()!! +
+                                        screenItems[card2].score?.trimAndDouble()!!) / houseScore) *
+                                        ((45.0 - currentTime?.toDouble()!!) / 10)
                             )
                             binding.playerOnePoints.text = playerScore.toString()
 
                         } else {
-                            val houseScore1: Double? = if (screenItems[card1].house.toString() == "Gryffindor"
-                                || screenItems[card1].house.toString() == "Slytherin") 2.0 else 1.0;
-                            val houseScore2: Double? = if (screenItems[card2].house.toString() == "Gryffindor"
-                                || screenItems[card1].house.toString() == "Slytherin") 2.0 else 1.0;
-                            playerScore = playerScore?.minus(((screenItems[card1].score?.trimAndDouble()!! +
-                                    screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!) *
-                                    (45.0 - currentTime?.toDouble()!! / 10)
+                            val houseScore1: Double? =
+                                if (screenItems[card1].house.toString() == "Gryffindor"
+                                    || screenItems[card1].house.toString() == "Slytherin"
+                                ) 2.0 else 1.0;
+                            val houseScore2: Double? =
+                                if (screenItems[card2].house.toString() == "Gryffindor"
+                                    || screenItems[card1].house.toString() == "Slytherin"
+                                ) 2.0 else 1.0;
+                            playerScore = playerScore?.minus(
+                                ((screenItems[card1].score?.trimAndDouble()!! +
+                                        screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!) *
+                                        ((45.0 - currentTime?.toDouble()!!) / 10)
                             )
                             binding.playerOnePoints.text = playerScore.toString()
 
@@ -200,28 +211,8 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
             }
         }
         database.addValueEventListener(cardListener)
-
-
         //val difficulty = intent.getStringExtra("Difficulty")
-
-
     }
-    /*private fun fetchImages () {
-        val db = Firebase.firestore
-        // Create a list to store the data
-        val docRef = db.collection("cards")
-        docRef
-            .get()
-            .addOnSuccessListener { cards ->
-                for (card in cards ){
-                    println("${card.id} -> ${card.data}")
-
-                }
-            }
-            .addOnFailureListener{
-                println("Error: $it")
-            }
-    } */
 
     private fun decodePicString(encodedString: String): Bitmap {
         if (encodedString.isNotEmpty()) {
