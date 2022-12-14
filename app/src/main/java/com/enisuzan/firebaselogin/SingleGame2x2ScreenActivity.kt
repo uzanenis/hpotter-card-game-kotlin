@@ -2,6 +2,7 @@ package com.enisuzan.firebaselogin
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Base64
@@ -31,6 +32,8 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
         setContentView(binding.root)
         buttons = listOf(imageButton1, imageButton2, imageButton3, imageButton4)
         database = Firebase.database.reference.child("cards")
+        var mediaPlayer = MediaPlayer.create(this@SingleGame2x2ScreenActivity,R.raw.song1wholegame)
+        mediaPlayer.start()
 
         fun writeNewCard(name: String, house: String, score: String, image: String) {
             val card = Card(name, house, score, image, false, false)
@@ -38,33 +41,27 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
             database.child(cardId.toString()).setValue(card)
         }
         /*writeNewCard(
-            "Sybill Trelawney",
-            "Ravenclaw",
-            "14",
-            "") */
+            "Cedric Diggory",
+            "Hufflepuff",
+            "18",
+            "")*/
+
+
 
         val cardListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 var items: ArrayList<Card> = arrayListOf()
-                var items2: ArrayList<Card> = arrayListOf()
                 var currentCard: Int? = null
                 var currentTime: Long? = null
                 var playerScore: Double? = 0.0
-                var houseScores: HashMap<String, Double> = hashMapOf(
-                    "Slytherin" to 2.0,
-                    "Gryffindor" to 2.0,
-                    "Ravenclaw" to 1.0,
-                    "Hufflepuff" to 1.0
-                )
+                var matchedCount : Int = 0
 
                 println("Firebase ile veriler yüklendi!!")
 
                 for (postSnapshot in snapshot.children) {
                     val card = postSnapshot.getValue<Card>()
-
                     if (card != null) {
                         items.add(card.copy())
-                        items2.add(card.copy())
                     }
 
                 }
@@ -84,6 +81,10 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
                     }
 
                     override fun onFinish() {
+                        mediaPlayer.release()
+                        mediaPlayer = null
+                        mediaPlayer = MediaPlayer.create(this@SingleGame2x2ScreenActivity,R.raw.song3timeover)
+                        mediaPlayer.start()
                         Toast.makeText(
                             this@SingleGame2x2ScreenActivity,
                             "Süre Bitti!",
@@ -105,8 +106,23 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
 
                 //Eşleşme kontrolü
                 fun checkMatch(card1: Int, card2: Int) {
+
                     fun String.trimAndDouble() = trim().toDouble()
                     if (screenItems[card1].name == screenItems[card2].name) {
+                        matchedCount += 1;
+                        ////
+                        if(matchedCount == 2){
+                            mediaPlayer?.release()
+                            mediaPlayer = null
+                            mediaPlayer = MediaPlayer.create(this@SingleGame2x2ScreenActivity,R.raw.song4won)
+                            mediaPlayer.start()
+                        }else{
+                            mediaPlayer?.release()
+                            mediaPlayer = null
+                            mediaPlayer = MediaPlayer.create(this@SingleGame2x2ScreenActivity,R.raw.song2matched)
+                            mediaPlayer.start()
+                        }
+                        ////
                         val houseScore: Double =
                             if (screenItems[card1].house.toString() == "Gryffindor"
                                 || screenItems[card1].house.toString() == "Slytherin"

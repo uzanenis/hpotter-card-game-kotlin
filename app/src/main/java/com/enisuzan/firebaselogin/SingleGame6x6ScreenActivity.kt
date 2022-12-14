@@ -2,6 +2,7 @@ package com.enisuzan.firebaselogin
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -86,6 +87,8 @@ class SingleGame6x6ScreenActivity : AppCompatActivity() {
             imageButton36,
         )
         database = Firebase.database.reference.child("cards")
+        var mediaPlayer = MediaPlayer.create(this@SingleGame6x6ScreenActivity, R.raw.song1wholegame)
+        mediaPlayer.start()
         fun writeNewCard(key: String, name: String, house: String, score: String, image: String) {
             val card = Card(name, house, score, image, false, false)
 
@@ -96,16 +99,10 @@ class SingleGame6x6ScreenActivity : AppCompatActivity() {
         val cardListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 var items: ArrayList<Card> = arrayListOf()
-                var items2: ArrayList<Card> = arrayListOf()
                 var currentCard: Int? = null
                 var currentTime: Long? = null
                 var playerScore: Double? = 0.0
-                var houseScores: HashMap<String, Double> = hashMapOf(
-                    "Slytherin" to 2.0,
-                    "Gryffindor" to 2.0,
-                    "Ravenclaw" to 1.0,
-                    "Hufflepuff" to 1.0
-                )
+                var matchedCount: Int = 0
 
                 println("Firebase ile veriler yüklendi!!")
 
@@ -114,26 +111,70 @@ class SingleGame6x6ScreenActivity : AppCompatActivity() {
 
                     if (card != null) {
                         items.add(card.copy())
-                        items2.add(card.copy())
                     }
 
                 }
                 var screenItems: ArrayList<Card> = arrayListOf()
                 items.shuffle()
-                for (item in 0..17) {
-                    screenItems.add(items[item].copy())
-                    screenItems.add(items[item].copy())
+                var count1: Int = 0
+                var count2: Int = 0
+                var count3: Int = 0
+                var count4: Int = 0
+                items.forEach {
+                    if(count1 < 4){
+                        if (it.house!!.lowercase() == "gryffindor"){
+                            screenItems.add(it.copy())
+                            screenItems.add(it.copy())
+                            count1 += 1
+                        }
+                    }
+                    if(count2 < 4){
+                        if (it.house!!.lowercase() == "slytherin"){
+                            screenItems.add(it.copy())
+                            screenItems.add(it.copy())
+                            count2 += 1
+                        }
+                    }
+                    if(count3 < 5){
+                        if (it.house!!.lowercase() == "ravenclaw"){
+                            screenItems.add(it.copy())
+                            screenItems.add(it.copy())
+                            count3 += 1
+                        }
+                    }
+                    if(count4 < 5){
+                        if (it.house!!.lowercase() == "hufflepuff"){
+                            screenItems.add(it.copy())
+                            screenItems.add(it.copy())
+                            count4 += 1
+                        }
+                    }
+
                 }
+
+                /*for (item in 0..17) {
+                    screenItems.add(items[item].copy())
+                    screenItems.add(items[item].copy())
+                }*/
+
                 screenItems.shuffle()
                 //Sayaç
                 val timer = object : CountDownTimer(45000, 1000) {
                     override fun onTick(p0: Long) {
                         val seconds = p0 / 1000
                         currentTime = seconds
-                        binding.timeCounter.text = "00:$seconds"
+                        if(seconds < 10) binding.timeCounter.text = "00:0$seconds"
+                        else binding.timeCounter.text = "00:$seconds"
                     }
 
                     override fun onFinish() {
+                        mediaPlayer.release()
+                        mediaPlayer = null
+                        mediaPlayer = MediaPlayer.create(
+                            this@SingleGame6x6ScreenActivity,
+                            R.raw.song3timeover
+                        )
+                        mediaPlayer.start()
                         Toast.makeText(
                             this@SingleGame6x6ScreenActivity,
                             "Süre Bitti!",
@@ -155,8 +196,28 @@ class SingleGame6x6ScreenActivity : AppCompatActivity() {
 
                 //Eşleşme kontrolü
                 fun checkMatch(card1: Int, card2: Int) {
+
+
                     fun String.trimAndDouble() = trim().toDouble()
                     if (screenItems[card1].name == screenItems[card2].name) {
+                        matchedCount += 1;
+                        ////
+                        if (matchedCount == 16) {
+                            mediaPlayer?.release()
+                            mediaPlayer = null
+                            mediaPlayer =
+                                MediaPlayer.create(this@SingleGame6x6ScreenActivity, R.raw.song4won)
+                            mediaPlayer.start()
+                        } else {
+                            mediaPlayer?.release()
+                            mediaPlayer = null
+                            mediaPlayer = MediaPlayer.create(
+                                this@SingleGame6x6ScreenActivity,
+                                R.raw.song2matched
+                            )
+                            mediaPlayer.start()
+                        }
+                        ////
                         val houseScore: Double =
                             if (screenItems[card1].house.toString() == "Gryffindor"
                                 || screenItems[card1].house.toString() == "Slytherin"
@@ -180,9 +241,7 @@ class SingleGame6x6ScreenActivity : AppCompatActivity() {
                             val scoreCalc = ((screenItems[card1].score?.trimAndDouble()!! +
                                     screenItems[card2].score?.trimAndDouble()!!) / houseScore) *
                                     ((45.0 - currentTime?.toDouble()!!) / 10)
-                            println("Son değer $scoreCalc")
                             playerScore = playerScore?.minus(scoreCalc)
-                            println("Card1 -> ${screenItems[card1].score?.trimAndDouble()!!} card2 -> ${screenItems[card2].score?.trimAndDouble()!!} house score-> ${houseScore}")
                             binding.playerOnePoints.text = playerScore.toString()
 
                         } else {
@@ -208,7 +267,6 @@ class SingleGame6x6ScreenActivity : AppCompatActivity() {
                 //Cardların durumlarını kontrol etme
                 fun updateCards(position: Int) {
                     val card = screenItems[position]
-                    println("${card.name} -> ${card.house} -> ${card.score}")
                     if (card.isFaceUp == true) {
                         Toast.makeText(
                             this@SingleGame6x6ScreenActivity,
