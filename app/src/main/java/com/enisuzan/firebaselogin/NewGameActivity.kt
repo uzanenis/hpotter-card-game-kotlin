@@ -68,6 +68,30 @@ class NewGameActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }
+            if(difficulty == "2x2" && gameMode == "Multi"){
+                val intent = Intent(this, MultiGame2x2ScreenActivity::class.java)
+                val bundle = Bundle()
+                bundle.putString("Difficulty", difficulty)
+                intent.putExtras(bundle)
+                startActivity(intent)
+                finish()
+            }
+            if(difficulty == "4x4" && gameMode == "Multi"){
+                val intent = Intent(this, MultiGame4x4ScreenActivity::class.java)
+                val bundle = Bundle()
+                bundle.putString("Difficulty", difficulty)
+                intent.putExtras(bundle)
+                startActivity(intent)
+                finish()
+            }
+            if(difficulty == "6x6" && gameMode == "Multi"){
+                val intent = Intent(this, MultiGame6x6ScreenActivity::class.java)
+                val bundle = Bundle()
+                bundle.putString("Difficulty", difficulty)
+                intent.putExtras(bundle)
+                startActivity(intent)
+                finish()
+            }
 
         }
     }

@@ -10,7 +10,7 @@ import android.util.Log
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.enisuzan.firebaselogin.databinding.ActivitySingleGame2x2ScreenBinding
+import com.enisuzan.firebaselogin.databinding.ActivityMultiGame4x4ScreenBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -18,48 +18,70 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_single_game2x2_screen.*
+import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton1
+import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton2
+import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton3
+import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton4
+import kotlinx.android.synthetic.main.activity_single_game4x4_screen.*
 
-class SingleGame2x2ScreenActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySingleGame2x2ScreenBinding
+class MultiGame4x4ScreenActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMultiGame4x4ScreenBinding
     private lateinit var buttons: List<ImageButton>
     private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        binding = ActivitySingleGame2x2ScreenBinding.inflate(layoutInflater)
+        binding = ActivityMultiGame4x4ScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        buttons = listOf(imageButton1, imageButton2, imageButton3, imageButton4)
+        buttons = listOf(
+            imageButton1,
+            imageButton2,
+            imageButton3,
+            imageButton4,
+            imageButton5,
+            imageButton6,
+            imageButton7,
+            imageButton8,
+            imageButton9,
+            imageButton10,
+            imageButton11,
+            imageButton12,
+            imageButton13,
+            imageButton14,
+            imageButton15,
+            imageButton16
+        )
         database = Firebase.database.reference.child("cards")
-        var mediaPlayer = MediaPlayer.create(this@SingleGame2x2ScreenActivity,R.raw.song1wholegame)
+        var mediaPlayer = MediaPlayer.create(this@MultiGame4x4ScreenActivity, R.raw.song1wholegame)
         mediaPlayer.start()
-
-        fun writeNewCard(name: String, house: String, score: String, image: String) {
+        fun writeNewCard(key: String, name: String, house: String, score: String, image: String) {
             val card = Card(name, house, score, image, false, false)
-            val cardId = database.push().key
-            database.child(cardId.toString()).setValue(card)
+
+            database.child(key).setValue(card)
         }
-        /*writeNewCard(
-            "Cedric Diggory",
-            "Hufflepuff",
-            "18",
-            "")*/
-
-
+        //writeNewCard("6","de","ne","12","i")
 
         val cardListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 var items: ArrayList<Card> = arrayListOf()
                 var currentCard: Int? = null
                 var currentTime: Long? = null
-                var playerScore: Double? = 0.0
-                var matchedCount : Int = 0
+                var playerScore1: Double? = 0.0
+                var playerScore2: Double? = 0.0
+                var matchedCount: Int = 0
+                var turn = true
+                //Player two text opacity
+                binding.playerTwo.alpha = 0.3f
+                binding.playerTwoPoints.alpha = 0.3f
+
+
 
                 println("Firebase ile veriler yüklendi!!")
 
                 for (postSnapshot in snapshot.children) {
                     val card = postSnapshot.getValue<Card>()
+
                     if (card != null) {
                         items.add(card.copy())
                     }
@@ -67,27 +89,65 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
                 }
                 var screenItems: ArrayList<Card> = arrayListOf()
                 items.shuffle()
-                for (item in 0..1) {
-                    screenItems.add(items[item].copy())
-                    screenItems.add(items[item].copy())
+                var count1: Int = 0
+                var count2: Int = 0
+                var count3: Int = 0
+                var count4: Int = 0
+                items.forEach {
+                    if (count1 < 2) {
+                        if (it.house!!.lowercase() == "gryffindor") {
+                            screenItems.add(it.copy())
+                            screenItems.add(it.copy())
+                            count1 += 1
+                        }
+                    }
+                    if (count2 < 2) {
+                        if (it.house!!.lowercase() == "slytherin") {
+                            screenItems.add(it.copy())
+                            screenItems.add(it.copy())
+                            count2 += 1
+                        }
+                    }
+                    if (count3 < 2) {
+                        if (it.house!!.lowercase() == "ravenclaw") {
+                            screenItems.add(it.copy())
+                            screenItems.add(it.copy())
+                            count3 += 1
+                        }
+                    }
+                    if (count4 < 2) {
+                        if (it.house!!.lowercase() == "hufflepuff") {
+                            screenItems.add(it.copy())
+                            screenItems.add(it.copy())
+                            count4 += 1
+                        }
+                    }
+
                 }
+                /*for (item in 0..7) {
+                    screenItems.add(items[item].copy())
+                    screenItems.add(items[item].copy())
+                }*/
                 screenItems.shuffle()
                 //Sayaç
-                val timer = object : CountDownTimer(45000, 1000) {
+                val timer = object : CountDownTimer(60000, 1000) {
                     override fun onTick(p0: Long) {
                         val seconds = p0 / 1000
                         currentTime = seconds
-                        if(seconds < 10) binding.timeCounter.text = "00:0$seconds"
+                        if (seconds < 10) binding.timeCounter.text = "00:0$seconds"
                         else binding.timeCounter.text = "00:$seconds"
                     }
 
                     override fun onFinish() {
                         mediaPlayer.release()
                         mediaPlayer = null
-                        mediaPlayer = MediaPlayer.create(this@SingleGame2x2ScreenActivity,R.raw.song3timeover)
+                        mediaPlayer = MediaPlayer.create(
+                            this@MultiGame4x4ScreenActivity,
+                            R.raw.song3timeover
+                        )
                         mediaPlayer.start()
                         Toast.makeText(
-                            this@SingleGame2x2ScreenActivity,
+                            this@MultiGame4x4ScreenActivity,
                             "Süre Bitti!",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -107,20 +167,23 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
 
                 //Eşleşme kontrolü
                 fun checkMatch(card1: Int, card2: Int) {
-
                     fun String.trimAndDouble() = trim().toDouble()
                     if (screenItems[card1].name == screenItems[card2].name) {
                         matchedCount += 1;
                         ////
-                        if(matchedCount == 2){
+                        if (matchedCount == 8) {
                             mediaPlayer?.release()
                             mediaPlayer = null
-                            mediaPlayer = MediaPlayer.create(this@SingleGame2x2ScreenActivity,R.raw.song4won)
+                            mediaPlayer =
+                                MediaPlayer.create(this@MultiGame4x4ScreenActivity, R.raw.song4won)
                             mediaPlayer.start()
-                        }else{
+                        } else {
                             mediaPlayer?.release()
                             mediaPlayer = null
-                            mediaPlayer = MediaPlayer.create(this@SingleGame2x2ScreenActivity,R.raw.song2matched)
+                            mediaPlayer = MediaPlayer.create(
+                                this@MultiGame4x4ScreenActivity,
+                                R.raw.song2matched
+                            )
                             mediaPlayer.start()
                         }
                         ////
@@ -129,27 +192,39 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
                                 || screenItems[card1].house.toString() == "Slytherin"
                             ) 2.0 else 1.0;
                         Toast.makeText(
-                            this@SingleGame2x2ScreenActivity,
+                            this@MultiGame4x4ScreenActivity,
                             "Cards matched! Good job!",
                             Toast.LENGTH_SHORT
                         ).show()
                         screenItems[card1].isMatched = true
                         screenItems[card2].isMatched = true
-                        playerScore =
-                            playerScore?.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore) * (currentTime?.toDouble()!! / 10))
-                        binding.playerOnePoints.text = playerScore.toString()
+                        if (turn) {
+                            playerScore1 =
+                                playerScore1?.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore) * (currentTime?.toDouble()!! / 10))
+                            binding.playerOnePoints.text = "${playerScore1.toString()} Score"
+                        } else {
+                            playerScore2 =
+                                playerScore2?.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore) * (currentTime?.toDouble()!! / 10))
+                            binding.playerTwoPoints.text = "${playerScore2.toString()} Score"
+
+                        }
                     } else {
                         if (screenItems[card1].house == screenItems[card2].house) {
                             val houseScore: Double =
                                 if (screenItems[card1].house.toString() == "Gryffindor"
                                     || screenItems[card1].house.toString() == "Slytherin"
                                 ) 2.0 else 1.0;
-                            playerScore = playerScore?.minus(
-                                ((screenItems[card1].score?.trimAndDouble()!! +
-                                        screenItems[card2].score?.trimAndDouble()!!) / houseScore) *
-                                        ((45.0 - currentTime?.toDouble()!!) / 10)
-                            )
-                            binding.playerOnePoints.text = playerScore.toString()
+                            val scoreCalc = ((screenItems[card1].score?.trimAndDouble()!! +
+                                    screenItems[card2].score?.trimAndDouble()!!) / houseScore) *
+                                    ((60.0 - currentTime?.toDouble()!!) / 10)
+                            if (turn) {
+                                playerScore1 = playerScore1?.minus(scoreCalc)
+                                binding.playerOnePoints.text = "${playerScore1.toString()} Score"
+                            } else {
+                                playerScore2 = playerScore2?.minus(scoreCalc)
+                                binding.playerTwoPoints.text = "${playerScore2.toString()} Score"
+                            }
+
 
                         } else {
                             val houseScore1: Double? =
@@ -160,12 +235,35 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
                                 if (screenItems[card2].house.toString() == "Gryffindor"
                                     || screenItems[card1].house.toString() == "Slytherin"
                                 ) 2.0 else 1.0;
-                            playerScore = playerScore?.minus(
-                                ((screenItems[card1].score?.trimAndDouble()!! +
-                                        screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!) *
-                                        ((45.0 - currentTime?.toDouble()!!) / 10)
-                            )
-                            binding.playerOnePoints.text = playerScore.toString()
+                            if (turn) {
+                                playerScore1 = playerScore1?.minus(
+                                    ((screenItems[card1].score?.trimAndDouble()!! +
+                                            screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!) *
+                                            ((60.0 - currentTime?.toDouble()!!) / 10)
+                                )
+                                binding.playerOnePoints.text = "${playerScore1.toString()} Score"
+                            } else {
+                                playerScore2 = playerScore2?.minus(
+                                    ((screenItems[card1].score?.trimAndDouble()!! +
+                                            screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!) *
+                                            ((60.0 - currentTime?.toDouble()!!) / 10)
+                                )
+                                binding.playerTwoPoints.text = "${playerScore2.toString()} Score"
+                            }
+                            //
+                            turn = !turn
+                            if (!turn) {
+                                binding.playerOne.alpha = 0.3f
+                                binding.playerOnePoints.alpha = 0.3f
+                                binding.playerTwo.alpha = 1f
+                                binding.playerTwoPoints.alpha = 1f
+
+                            } else {
+                                binding.playerOne.alpha = 1f
+                                binding.playerOnePoints.alpha = 1f
+                                binding.playerTwo.alpha = 0.3f
+                                binding.playerTwoPoints.alpha = 0.3f
+                            }
 
                         }
                     }
@@ -174,10 +272,9 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
                 //Cardların durumlarını kontrol etme
                 fun updateCards(position: Int) {
                     val card = screenItems[position]
-                    println("${card.name} -> ${card.house}")
                     if (card.isFaceUp == true) {
                         Toast.makeText(
-                            this@SingleGame2x2ScreenActivity,
+                            this@MultiGame4x4ScreenActivity,
                             "Hatalı oynama!",
                             Toast.LENGTH_SHORT
                         ).show()
