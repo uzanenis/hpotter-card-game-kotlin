@@ -19,6 +19,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_single_game2x2_screen.*
+import java.io.File
 
 class SingleGame2x2ScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySingleGame2x2ScreenBinding
@@ -72,6 +73,11 @@ class SingleGame2x2ScreenActivity : AppCompatActivity() {
                     screenItems.add(items[item].copy())
                 }
                 screenItems.shuffle()
+                File(applicationContext.filesDir,"data.txt").printWriter().use { out ->
+                    screenItems.forEachIndexed { index, card ->
+                        out.println("$index -> ${card.name} -> ${card.house} -> ${card.score}")
+                    }
+                }
                 //Sayaç
                 val timer = object : CountDownTimer(45000, 1000) {
                     override fun onTick(p0: Long) {

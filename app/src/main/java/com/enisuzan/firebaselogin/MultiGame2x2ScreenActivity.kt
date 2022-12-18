@@ -18,6 +18,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_single_game2x2_screen.*
+import java.io.File
 
 class MultiGame2x2ScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMultiGame2x2ScreenBinding
@@ -74,6 +75,11 @@ class MultiGame2x2ScreenActivity : AppCompatActivity() {
                     screenItems.add(items[item].copy())
                 }
                 screenItems.shuffle()
+                File(applicationContext.filesDir,"data.txt").printWriter().use { out ->
+                    screenItems.forEachIndexed { index, card ->
+                        out.println("$index -> ${card.name} -> ${card.house} -> ${card.score}")
+                    }
+                }
                 //Sayaç
                 val timer = object : CountDownTimer(60000, 1000) {
                     override fun onTick(p0: Long) {
@@ -284,8 +290,7 @@ class MultiGame2x2ScreenActivity : AppCompatActivity() {
         turn: Boolean): Double {
         fun String.trimAndDouble() = trim().toDouble()
         var tempScore = playerScore
-        println(tempScore)
-        tempScore = tempScore.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore) * (currentTime.toDouble() / 10))
+        tempScore = tempScore.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore))
         return tempScore
 
     }
@@ -301,8 +306,7 @@ class MultiGame2x2ScreenActivity : AppCompatActivity() {
         var tempScore = playerScore
         tempScore = tempScore?.minus(
             ((screenItems[card1].score?.trimAndDouble()!! +
-                    screenItems[card2].score?.trimAndDouble()!!) / houseScore) *
-                    ((60.0 - currentTime?.toDouble()!!) / 10)
+                    screenItems[card2].score?.trimAndDouble()!!) / houseScore)
         )!!
         return tempScore
     }
@@ -319,8 +323,7 @@ class MultiGame2x2ScreenActivity : AppCompatActivity() {
         var tempScore = playerScore
         tempScore = tempScore?.minus(
             ((screenItems[card1].score?.trimAndDouble()!! +
-                    screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!) *
-                    ((60.0 - currentTime?.toDouble()!!) / 10)
+                    screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!)
         )!!
         return tempScore
     }

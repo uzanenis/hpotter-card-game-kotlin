@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton
 import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton3
 import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton4
 import kotlinx.android.synthetic.main.activity_single_game4x4_screen.*
+import java.io.File
 
 class SingleGame4x4ScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySingleGame4x4ScreenBinding
@@ -124,6 +125,11 @@ class SingleGame4x4ScreenActivity : AppCompatActivity() {
                     screenItems.add(items[item].copy())
                 }*/
                 screenItems.shuffle()
+                File(applicationContext.filesDir,"data.txt").printWriter().use { out ->
+                    screenItems.forEachIndexed { index, card ->
+                        out.println("$index -> ${card.name} -> ${card.house} -> ${card.score}")
+                    }
+                }
                 //Sayaç
                 val timer = object : CountDownTimer(45000, 1000) {
                     override fun onTick(p0: Long) {

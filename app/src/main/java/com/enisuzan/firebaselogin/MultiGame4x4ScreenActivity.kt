@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton
 import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton3
 import kotlinx.android.synthetic.main.activity_single_game2x2_screen.imageButton4
 import kotlinx.android.synthetic.main.activity_single_game4x4_screen.*
+import java.io.File
 
 class MultiGame4x4ScreenActivity : AppCompatActivity() {
 
@@ -129,6 +130,11 @@ class MultiGame4x4ScreenActivity : AppCompatActivity() {
                     screenItems.add(items[item].copy())
                 }*/
                 screenItems.shuffle()
+                File(applicationContext.filesDir,"data.txt").printWriter().use { out ->
+                    screenItems.forEachIndexed { index, card ->
+                        out.println("$index -> ${card.name} -> ${card.house} -> ${card.score}")
+                    }
+                }
                 //Sayaç
                 val timer = object : CountDownTimer(60000, 1000) {
                     override fun onTick(p0: Long) {
@@ -200,11 +206,11 @@ class MultiGame4x4ScreenActivity : AppCompatActivity() {
                         screenItems[card2].isMatched = true
                         if (turn) {
                             playerScore1 =
-                                playerScore1?.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore) * (currentTime?.toDouble()!! / 10))
+                                playerScore1?.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore))
                             binding.playerOnePoints.text = "${playerScore1.toString()} Score"
                         } else {
                             playerScore2 =
-                                playerScore2?.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore) * (currentTime?.toDouble()!! / 10))
+                                playerScore2?.plus((2.0 * (screenItems[card1].score?.trimAndDouble()!!) * houseScore))
                             binding.playerTwoPoints.text = "${playerScore2.toString()} Score"
 
                         }
@@ -215,8 +221,7 @@ class MultiGame4x4ScreenActivity : AppCompatActivity() {
                                     || screenItems[card1].house.toString() == "Slytherin"
                                 ) 2.0 else 1.0;
                             val scoreCalc = ((screenItems[card1].score?.trimAndDouble()!! +
-                                    screenItems[card2].score?.trimAndDouble()!!) / houseScore) *
-                                    ((60.0 - currentTime?.toDouble()!!) / 10)
+                                    screenItems[card2].score?.trimAndDouble()!!) / houseScore)
                             if (turn) {
                                 playerScore1 = playerScore1?.minus(scoreCalc)
                                 binding.playerOnePoints.text = "${playerScore1.toString()} Score"
@@ -238,15 +243,13 @@ class MultiGame4x4ScreenActivity : AppCompatActivity() {
                             if (turn) {
                                 playerScore1 = playerScore1?.minus(
                                     ((screenItems[card1].score?.trimAndDouble()!! +
-                                            screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!) *
-                                            ((60.0 - currentTime?.toDouble()!!) / 10)
+                                            screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!)
                                 )
                                 binding.playerOnePoints.text = "${playerScore1.toString()} Score"
                             } else {
                                 playerScore2 = playerScore2?.minus(
                                     ((screenItems[card1].score?.trimAndDouble()!! +
-                                            screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!) *
-                                            ((60.0 - currentTime?.toDouble()!!) / 10)
+                                            screenItems[card2].score?.trimAndDouble()!!) / 2) * (houseScore1!! * houseScore2!!)
                                 )
                                 binding.playerTwoPoints.text = "${playerScore2.toString()} Score"
                             }

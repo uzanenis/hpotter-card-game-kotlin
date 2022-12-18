@@ -17,6 +17,7 @@
         tools:targetApi="31">
         <activity
             android:name=".MultiGame6x6ScreenActivity"
+            android:parentActivityName=".NewGameActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -24,6 +25,7 @@
         </activity>
         <activity
             android:name=".MultiGame4x4ScreenActivity"
+            android:parentActivityName=".NewGameActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -31,6 +33,7 @@
         </activity>
         <activity
             android:name=".MultiGame2x2ScreenActivity"
+            android:parentActivityName=".NewGameActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -38,6 +41,7 @@
         </activity>
         <activity
             android:name=".SingleGame6x6ScreenActivity"
+            android:parentActivityName=".NewGameActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -45,21 +49,29 @@
         </activity>
         <activity
             android:name=".SingleGame4x4ScreenActivity"
-            android:exported="false">
+            android:parentActivityName=".NewGameActivity"
+            android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".SingleGame2x2ScreenActivity"
+            android:parentActivityName=".NewGameActivity"
             android:exported="false">
+
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".NewGameActivity"
-            android:exported="false">
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -74,11 +86,7 @@
         <activity
             android:name=".SigninActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

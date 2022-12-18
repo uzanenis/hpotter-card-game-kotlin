@@ -3,8 +3,12 @@ package com.enisuzan.firebaselogin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.enisuzan.firebaselogin.databinding.ActivityNewGameBinding
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_new_game.*
 
 class NewGameActivity : AppCompatActivity() {
@@ -14,6 +18,7 @@ class NewGameActivity : AppCompatActivity() {
         binding = ActivityNewGameBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        val user = Firebase.auth.currentUser
         var difficulty : String = ""
         var gameMode : String = ""
 
@@ -93,6 +98,19 @@ class NewGameActivity : AppCompatActivity() {
                 finish()
             }
 
+        }
+        binding.textView2.setOnClickListener{
+            binding.editTextTextPassword.visibility = View.VISIBLE
+            binding.button2.visibility = View.VISIBLE
+        }
+        binding.button2.setOnClickListener {
+            val newPassword = binding.editTextTextPassword.text.toString()
+            user!!.updatePassword(newPassword)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("Firebase", "User password updated.")
+                    }
+                }
         }
     }
 }
